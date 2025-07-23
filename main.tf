@@ -1,115 +1,118 @@
-# Internet VPC
-resource "aws_vpc" "main" {
+# VPC Configuration
+resource "aws_vpc" "sanskar_vpc" {
   cidr_block           = "10.0.0.0/16"
   instance_tenancy     = "default"
-  enable_dns_support   = "true"
-  enable_dns_hostnames = "true"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
   tags = {
-    Name = "main"
+    Name = "sanskar-main-vpc"
   }
 }
 
-# Subnets
-resource "aws_subnet" "main-public-1" {
-  vpc_id                  = aws_vpc.main.id
+# Public Subnets
+resource "aws_subnet" "sanskar_public_1" {
+  vpc_id                  = aws_vpc.sanskar_vpc.id
   cidr_block              = "10.0.1.0/24"
-  map_public_ip_on_launch = "true"
+  map_public_ip_on_launch = true
   availability_zone       = "ap-south-1a"
 
   tags = {
-    Name = "main-public-1"
+    Name = "sanskar-public-1"
   }
 }
 
-resource "aws_subnet" "main-public-2" {
-  vpc_id                  = aws_vpc.main.id
+resource "aws_subnet" "sanskar_public_2" {
+  vpc_id                  = aws_vpc.sanskar_vpc.id
   cidr_block              = "10.0.2.0/24"
-  map_public_ip_on_launch = "true"
+  map_public_ip_on_launch = true
   availability_zone       = "ap-south-1b"
 
   tags = {
-    Name = "main-public-2"
+    Name = "sanskar-public-2"
   }
 }
 
-resource "aws_subnet" "main-public-3" {
-  vpc_id                  = aws_vpc.main.id
+resource "aws_subnet" "sanskar_public_3" {
+  vpc_id                  = aws_vpc.sanskar_vpc.id
   cidr_block              = "10.0.3.0/24"
-  map_public_ip_on_launch = "true"
+  map_public_ip_on_launch = true
   availability_zone       = "ap-south-1c"
 
   tags = {
-    Name = "main-public-3"
+    Name = "sanskar-public-3"
   }
 }
 
-resource "aws_subnet" "main-private-1" {
-  vpc_id                  = aws_vpc.main.id
+# Private Subnets
+resource "aws_subnet" "sanskar_private_1" {
+  vpc_id                  = aws_vpc.sanskar_vpc.id
   cidr_block              = "10.0.4.0/24"
-  map_public_ip_on_launch = "false"
+  map_public_ip_on_launch = false
   availability_zone       = "ap-south-1a"
 
   tags = {
-    Name = "main-private-1"
+    Name = "sanskar-private-1"
   }
 }
 
-resource "aws_subnet" "main-private-2" {
-  vpc_id                  = aws_vpc.main.id
+resource "aws_subnet" "sanskar_private_2" {
+  vpc_id                  = aws_vpc.sanskar_vpc.id
   cidr_block              = "10.0.5.0/24"
-  map_public_ip_on_launch = "false"
+  map_public_ip_on_launch = false
   availability_zone       = "ap-south-1b"
 
   tags = {
-    Name = "main-private-2"
+    Name = "sanskar-private-2"
   }
 }
 
-resource "aws_subnet" "main-private-3" {
-  vpc_id                  = aws_vpc.main.id
+resource "aws_subnet" "sanskar_private_3" {
+  vpc_id                  = aws_vpc.sanskar_vpc.id
   cidr_block              = "10.0.6.0/24"
-  map_public_ip_on_launch = "false"
+  map_public_ip_on_launch = false
   availability_zone       = "ap-south-1c"
 
   tags = {
-    Name = "main-private-3"
+    Name = "sanskar-private-3"
   }
 }
 
-# Internet GW
-resource "aws_internet_gateway" "main-gw" {
-  vpc_id = aws_vpc.main.id
+# Internet Gateway
+resource "aws_internet_gateway" "sanskar_igw" {
+  vpc_id = aws_vpc.sanskar_vpc.id
 
   tags = {
-    Name = "main"
+    Name = "sanskar-igw"
   }
 }
 
-# route tables
-resource "aws_route_table" "main-public" {
-  vpc_id = aws_vpc.main.id
+# Public Route Table
+resource "aws_route_table" "sanskar_public_rt" {
+  vpc_id = aws_vpc.sanskar_vpc.id
+
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main-gw.id
+    gateway_id = aws_internet_gateway.sanskar_igw.id
   }
 
   tags = {
-    Name = "main-public-1"
+    Name = "sanskar-public-rt"
   }
 }
 
-# route associations public
-resource "aws_route_table_association" "main-public-1-a" {
-  subnet_id      = aws_subnet.main-public-1.id
-  route_table_id = aws_route_table.main-public.id
+# Route Table Associations
+resource "aws_route_table_association" "sanskar_public_1_assoc" {
+  subnet_id      = aws_subnet.sanskar_public_1.id
+  route_table_id = aws_route_table.sanskar_public_rt.id
 }
 
-resource "aws_route_table_association" "main-public-2-a" {
-  subnet_id      = aws_subnet.main-public-2.id
-  route_table_id = aws_route_table.main-public.id
+resource "aws_route_table_association" "sanskar_public_2_assoc" {
+  subnet_id      = aws_subnet.sanskar_public_2.id
+  route_table_id = aws_route_table.sanskar_public_rt.id
 }
 
-resource "aws_route_table_association" "main-public-3-a" {
-  subnet_id      = aws_subnet.main-public-3.id
-  route_table_id = aws_route_table.main-public.id
+resource "aws_route_table_association" "sanskar_public_3_assoc" {
+  subnet_id      = aws_subnet.sanskar_public_3.id
+  route_table_id = aws_route_table.sanskar_public_rt.id
 }
